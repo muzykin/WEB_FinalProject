@@ -45,9 +45,14 @@ const Navbar = () => {
             
             <>
               {auth.user.role === 'admin' ? (
-                <Button color="inherit" component={RouterLink} to="/admin/dashboard">
-                  Admin Dashboard
+                <>
+                <Button color="inherit" component={RouterLink} to="/admin/reservations">
+                  All Reservations
                 </Button>
+                <Button color="inherit" component={RouterLink} to="/admin/dashboard">
+                  Dashboard
+                </Button>
+                </>
               ) : (
                 <Button color="inherit" component={RouterLink} to="/my-reservations">
                   My Reservations
