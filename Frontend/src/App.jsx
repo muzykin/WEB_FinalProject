@@ -5,9 +5,10 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import RoomSearch from './pages/RoomSearch';
+import MyReservations from './pages/MyReservations';
 
 function App() {
-  return (
+  return (  
     <>
       <Navbar />
       
@@ -22,7 +23,7 @@ function App() {
 
           {/* Protected Routes for ALL authenticated users (Guests & Admins) */}
           <Route element={<ProtectedRoute />}>
-            <Route path="/my-reservations" element={<div>My Reservations (User)</div>} />
+            <Route path="/my-reservations" element={<MyReservations />} />
           </Route>
 
           {/* Protected Routes for ADMINS only */}
