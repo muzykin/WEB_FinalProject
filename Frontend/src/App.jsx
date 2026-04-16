@@ -4,6 +4,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import RoomSearch from './pages/RoomSearch';
 
 function App() {
   return (
@@ -17,7 +18,7 @@ function App() {
           <Route path="/about" element={<div>About Page (Public)</div>} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/search" element={<div>Room Search Page</div>} />
+          <Route path="/search" element={<RoomSearch />} />
 
           {/* Protected Routes for ALL authenticated users (Guests & Admins) */}
           <Route element={<ProtectedRoute />}>
