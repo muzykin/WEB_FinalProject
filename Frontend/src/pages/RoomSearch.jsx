@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react';
 import { 
   Container, Grid, Typography, Box, TextField, Button, 
-  FormControlLabel, Checkbox, Paper, Alert, CircularProgress 
+  FormControlLabel, Checkbox, Paper, Alert, CircularProgress, Snackbar 
 } from '@mui/material';
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
 import { axiosPublic } from '../api/axios';
 import RoomCard from '../components/RoomCard';
+import ReservationModal from '../components/ReservationModal';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
@@ -29,6 +30,11 @@ const RoomSearch = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [searchParams, setSearchParams] = useState(DEFAULT_SEARCH_PARAMS);
+
+  // Modal and Success State
+  const [selectedRoom, setSelectedRoom] = useState(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
 
   const fetchRooms = async (paramsToUse) => {
     try {
@@ -69,12 +75,27 @@ const RoomSearch = () => {
     fetchRooms(DEFAULT_SEARCH_PARAMS);
   }, []);
 
-  const handleReserve = (room) => {
+  const handleReserveClick = (room) => {
     if (!auth?.user) {
+      // Redirect to login but maybe save state later? Simple redirect for now.
       navigate('/login');
       return;
     }
-    alert(`Reservation flow for Room ${room.id} will be here!`);
+    setSelectedRoom(room);
+    setModalOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setModalOpen(false);
+    setSelectedRoom(null);
+  };
+
+  const handleReservationSuccess = () => {
+    setModalOpen(false);
+    setSelectedRoom(null);
+    setSuccessMessage('Reservation created successfully!');
+    // Re-fetch rooms to remove the newly booked one from availability list
+    fetchRooms(searchParams);
   };
 
   return (
@@ -190,13 +211,35 @@ const RoomSearch = () => {
             ) : (
               rooms.map((room) => (
                 <Grid item key={room.id} xs={12} sm={6} md={4} lg={3}>
-                  <RoomCard room={room} onReserve={handleReserve} />
+                  <RoomCard room={room} onReserve={handleReserveClick} />
                 </Grid>
               ))
             )}
           </Grid>
         )}
       </Container>
+
+      {/* Reservation Confirmation Modal */}
+      <ReservationModal 
+        open={modalOpen} 
+        onClose={handleModalClose} 
+        room={selectedRoom} 
+        searchParams={searchParams}
+        onSuccess={handleReservationSuccess} 
+      />
+
+      {/* Success Notification Snackbar */}
+      <Snackbar 
+        open={!!successMessage} 
+        autoHideDuration={6000} 
+        onClose={() => setSuccessMessage('')}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert onClose={() => setSuccessMessage('')} severity="success" sx={{ width: '100%' }}>
+          {successMessage}
+        </Alert>
+      </Snackbar>
+
     </LocalizationProvider>
   );
 };
