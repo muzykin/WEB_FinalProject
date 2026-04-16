@@ -42,16 +42,19 @@ const Navbar = () => {
               </Button>
             </>
           ) : (
-            
+            /* If user IS logged in */
             <>
               {auth.user.role === 'admin' ? (
                 <>
-                <Button color="inherit" component={RouterLink} to="/admin/reservations">
-                  All Reservations
-                </Button>
-                <Button color="inherit" component={RouterLink} to="/admin/dashboard">
-                  Dashboard
-                </Button>
+                  <Button color="inherit" component={RouterLink} to="/admin/locations">
+                    Hotels
+                  </Button>
+                  <Button color="inherit" component={RouterLink} to="/admin/reservations">
+                    All Reservations
+                  </Button>
+                  <Button color="inherit" component={RouterLink} to="/admin/dashboard">
+                    Dashboard
+                  </Button>
                 </>
               ) : (
                 <Button color="inherit" component={RouterLink} to="/my-reservations">

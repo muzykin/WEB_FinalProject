@@ -1,5 +1,6 @@
 import { Routes, Route } from 'react-router-dom';
 import AdminDashboard from './pages/AdminDashboard';
+import AdminLocations from './pages/AdminLocations';
 import AdminReservations from './pages/AdminReservations';
 import Navbar from './components/Navbar';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -32,7 +33,7 @@ function App() {
           <Route element={<ProtectedRoute requireAdmin={true} />}>
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
             <Route path="/admin/reservations" element={<AdminReservations />} />
-            <Route path="/admin/locations" element={<div>Admin Locations</div>} />
+            <Route path="/admin/locations" element={<AdminLocations />} />
           </Route>
         </Routes>
       </main>
