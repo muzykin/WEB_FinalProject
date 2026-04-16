@@ -1,4 +1,5 @@
 import { Routes, Route } from 'react-router-dom';
+import AdminDashboard from './pages/AdminDashboard';
 import Navbar from './components/Navbar';
 import ProtectedRoute from './components/ProtectedRoute';
 import Home from './pages/Home';
@@ -28,7 +29,7 @@ function App() {
 
           {/* Protected Routes for ADMINS only */}
           <Route element={<ProtectedRoute requireAdmin={true} />}>
-            <Route path="/admin/dashboard" element={<div>Admin Dashboard</div>} />
+            <Route path="/admin/dashboard" element={<AdminDashboard />} />
             <Route path="/admin/reservations" element={<div>Admin Reservations</div>} />
             <Route path="/admin/locations" element={<div>Admin Locations</div>} />
           </Route>
