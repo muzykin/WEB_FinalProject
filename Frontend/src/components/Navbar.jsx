@@ -49,6 +49,9 @@ const Navbar = () => {
                   <Button color="inherit" component={RouterLink} to="/admin/locations">
                     Hotels
                   </Button>
+                  <Button color="inherit" component={RouterLink} to="/admin/rooms">
+                    Rooms
+                  </Button>
                   <Button color="inherit" component={RouterLink} to="/admin/reservations">
                     All Reservations
                   </Button>

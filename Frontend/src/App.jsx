@@ -2,6 +2,7 @@ import { Routes, Route } from 'react-router-dom';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminLocations from './pages/AdminLocations';
 import AdminReservations from './pages/AdminReservations';
+import AdminRooms from './pages/AdminRooms';
 import Navbar from './components/Navbar';
 import ProtectedRoute from './components/ProtectedRoute';
 import Home from './pages/Home';
@@ -34,6 +35,7 @@ function App() {
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
             <Route path="/admin/reservations" element={<AdminReservations />} />
             <Route path="/admin/locations" element={<AdminLocations />} />
+            <Route path="/admin/rooms" element={<AdminRooms />} />
           </Route>
         </Routes>
       </main>
