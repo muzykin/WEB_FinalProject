@@ -1,4 +1,5 @@
 import { Routes, Route } from 'react-router-dom';
+import About from './pages/About';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminLocations from './pages/AdminLocations';
 import AdminReservations from './pages/AdminReservations';
@@ -20,7 +21,7 @@ function App() {
         <Routes>
           {/* Public Routes (Accessible by anyone) */}
           <Route path="/" element={<Home />} />
-          <Route path="/about" element={<div>About Page (Public)</div>} />
+          <Route path="/about" element={<About />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/search" element={<RoomSearch />} />
