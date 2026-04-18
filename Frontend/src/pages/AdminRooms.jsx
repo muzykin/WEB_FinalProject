@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { 
   Container, Typography, Box, CircularProgress, Alert, Paper, Button,
   Dialog, DialogTitle, DialogContent, DialogActions, TextField, 
-  Grid, IconButton, Snackbar, MenuItem, Select, InputLabel, FormControl
+  IconButton, Snackbar, MenuItem, Select, InputLabel, FormControl, FormHelperText
 } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import { useForm, Controller } from 'react-hook-form';
@@ -13,7 +13,7 @@ import { axiosPrivate } from '../api/axios';
 
 const AdminRooms = () => {
   const [rooms, setRooms] = useState([]);
-  const [locations, setLocations] = useState([]); // Needed for the dropdown
+  const [locations, setLocations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
@@ -29,7 +29,6 @@ const AdminRooms = () => {
   const fetchData = async () => {
     try {
       setLoading(true);
-      // Fetch both rooms and locations (to populate the select dropdown)
       const [roomsRes, locsRes] = await Promise.all([
         axiosPrivate.get('/api/admin/rooms'),
         axiosPrivate.get('/api/locations')
@@ -52,7 +51,6 @@ const AdminRooms = () => {
   const handleOpenModal = (room = null) => {
     setEditingRoom(room);
     if (room) {
-      // Prefill form for editing
       setValue('locationId', room.location.id);
       setValue('name', room.name);
       setValue('type', room.type);
@@ -60,7 +58,6 @@ const AdminRooms = () => {
       setValue('pricePerNight', room.pricePerNight);
       setValue('description', room.description);
     } else {
-      // Reset form for creating new
       reset({ locationId: '', name: '', type: 'Standard', capacity: 2, pricePerNight: 100, description: '' });
     }
     setOpenModal(true);
@@ -76,7 +73,6 @@ const AdminRooms = () => {
     try {
       setIsSaving(true);
       
-      // Ensure numerical values are correctly typed
       const payload = {
         ...data,
         locationId: Number(data.locationId),
@@ -92,7 +88,7 @@ const AdminRooms = () => {
         setSuccessMsg('Room created successfully!');
       }
       handleCloseModal();
-      fetchData(); // Refresh grids
+      fetchData(); 
     } catch (err) {
       console.error('Save failed:', err);
       setError(err.response?.data?.message || 'Failed to save room.');
@@ -188,39 +184,41 @@ const AdminRooms = () => {
         />
       </Paper>
 
-      {/* Create / Edit Modal */}
-      <Dialog open={openModal} onClose={handleCloseModal} maxWidth="sm" fullWidth>
-        <DialogTitle>{editingRoom ? 'Edit Room' : 'Add New Room'}</DialogTitle>
+\      <Dialog open={openModal} onClose={handleCloseModal} maxWidth="md" fullWidth>
+        <DialogTitle sx={{ fontWeight: 'bold', pb: 1, fontSize: '1.5rem' }}>
+          {editingRoom ? 'Edit Room' : 'Add New Room'}
+        </DialogTitle>
         <Box component="form" onSubmit={handleSubmit(onSubmit)}>
-          <DialogContent dividers>
-            <Grid container spacing={2}>
-              {/* Dropdown for Hotel Location */}
-              <Grid item xs={12}>
-                <FormControl fullWidth error={!!errors.locationId}>
-                  <InputLabel id="location-select-label">Hotel Location</InputLabel>
-                  <Controller
-                    name="locationId"
-                    control={control}
-                    rules={{ required: 'You must select a hotel location' }}
-                    defaultValue=""
-                    render={({ field }) => (
-                      <Select
-                        {...field}
-                        labelId="location-select-label"
-                        label="Hotel Location"
-                      >
-                        {locations.map((loc) => (
-                          <MenuItem key={loc.id} value={loc.id}>
-                            {loc.name} ({loc.city})
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    )}
-                  />
-                </FormControl>
-              </Grid>
+          <DialogContent dividers sx={{ p: 4 }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
               
-              <Grid item xs={12} sm={6}>
+              {/* Row 1: Hotel Location (Full width) */}
+              <FormControl fullWidth error={!!errors.locationId}>
+                <InputLabel id="location-select-label">Hotel Location</InputLabel>
+                <Controller
+                  name="locationId"
+                  control={control}
+                  rules={{ required: 'You must select a hotel location' }}
+                  defaultValue=""
+                  render={({ field }) => (
+                    <Select
+                      {...field}
+                      labelId="location-select-label"
+                      label="Hotel Location"
+                    >
+                      {locations.map((loc) => (
+                        <MenuItem key={loc.id} value={loc.id}>
+                          {loc.name} ({loc.city})
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  )}
+                />
+                {errors.locationId && <FormHelperText>{errors.locationId.message}</FormHelperText>}
+              </FormControl>
+              
+              {/* Row 2: Room Name & Type (50% / 50%) */}
+              <Box sx={{ display: 'flex', gap: 4, flexDirection: { xs: 'column', sm: 'row' } }}>
                 <TextField
                   fullWidth
                   label="Room Name"
@@ -228,16 +226,17 @@ const AdminRooms = () => {
                   error={!!errors.name}
                   helperText={errors.name?.message}
                 />
-              </Grid>
-              <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
                   label="Room Type (e.g. Standard, Suite)"
                   {...register('type', { required: 'Type is required' })}
                   error={!!errors.type}
+                  helperText={errors.type?.message}
                 />
-              </Grid>
-              <Grid item xs={12} sm={6}>
+              </Box>
+              
+              {/* Row 3: Capacity & Price (50% / 50%) */}
+              <Box sx={{ display: 'flex', gap: 4, flexDirection: { xs: 'column', sm: 'row' } }}>
                 <TextField
                   fullWidth
                   label="Capacity (Guests)"
@@ -245,9 +244,8 @@ const AdminRooms = () => {
                   inputProps={{ min: "1", max: "10" }}
                   {...register('capacity', { required: 'Capacity is required', min: 1 })}
                   error={!!errors.capacity}
+                  helperText={errors.capacity?.message}
                 />
-              </Grid>
-              <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
                   label="Price Per Night ($)"
@@ -255,25 +253,32 @@ const AdminRooms = () => {
                   inputProps={{ min: "1" }}
                   {...register('pricePerNight', { required: 'Price is required', min: 1 })}
                   error={!!errors.pricePerNight}
+                  helperText={errors.pricePerNight?.message}
                 />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  label="Description"
-                  multiline
-                  rows={3}
-                  {...register('description')}
-                />
-              </Grid>
-            </Grid>
+              </Box>
+              
+              {/* Row 4: Description (Full width, tall) */}
+              <TextField
+                fullWidth
+                label="Description"
+                multiline
+                rows={4}
+                placeholder="Enter a detailed description of the room..."
+                {...register('description')}
+              />
+              
+            </Box>
           </DialogContent>
-          <DialogActions>
-            <Button onClick={handleCloseModal}>Cancel</Button>
+          <DialogActions sx={{ px: 4, py: 3 }}>
+            <Button onClick={handleCloseModal} variant="outlined" color="inherit" sx={{ mr: 1 }}>
+              Cancel
+            </Button>
             <Button 
               type="submit" 
               variant="contained" 
               disabled={isSaving}
+              size="large"
+              sx={{ px: 4 }}
             >
               {isSaving ? 'Saving...' : 'Save Room'}
             </Button>
