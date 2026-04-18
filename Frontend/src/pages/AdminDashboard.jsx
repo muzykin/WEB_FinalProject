@@ -8,18 +8,31 @@ import {
 } from 'recharts';
 import { axiosPrivate } from '../api/axios';
 import GroupIcon from '@mui/icons-material/Group';
-import HotelIcon from '@mui/icons-material/Hotel';
 import EventAvailableIcon from '@mui/icons-material/EventAvailable';
 import CancelIcon from '@mui/icons-material/Cancel';
 
-// Colors for the Pie Chart
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
+const COLORS = ['#1976d2', '#2e7d32', '#ed6c02', '#9c27b0', '#d32f2f'];
 
+// Reusable animated Stat Card
 const StatCard = ({ title, value, icon, color }) => (
-  <Paper elevation={3} sx={{ p: 3, display: 'flex', alignItems: 'center', height: '100%' }}>
+  <Paper 
+    elevation={3} 
+    sx={{ 
+      p: 3, 
+      display: 'flex', 
+      alignItems: 'center', 
+      height: '100%',
+      borderRadius: 3,
+      transition: 'transform 0.3s, box-shadow 0.3s',
+      '&:hover': {
+        transform: 'translateY(-5px)',
+        boxShadow: '0 12px 24px rgba(0,0,0,0.1)'
+      }
+    }}
+  >
     <Box sx={{ 
       backgroundColor: `${color}15`, 
-      p: 2, 
+      p: 2.5, 
       borderRadius: '50%', 
       display: 'flex', 
       mr: 3 
@@ -27,10 +40,10 @@ const StatCard = ({ title, value, icon, color }) => (
       {icon}
     </Box>
     <Box>
-      <Typography color="text.secondary" variant="body2" gutterBottom>
+      <Typography color="text.secondary" variant="subtitle1" fontWeight="medium" gutterBottom>
         {title}
       </Typography>
-      <Typography variant="h4" component="div">
+      <Typography variant="h3" fontWeight="bold" sx={{ color: color }}>
         {value}
       </Typography>
     </Box>
@@ -61,8 +74,8 @@ const AdminDashboard = () => {
 
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 10 }}>
-        <CircularProgress />
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '60vh' }}>
+        <CircularProgress size={60} thickness={4} />
       </Box>
     );
   }
@@ -74,72 +87,85 @@ const AdminDashboard = () => {
   if (!data) return null;
 
   return (
-    <Container maxWidth="xl" sx={{ mt: 4, mb: 8 }}>
-      <Typography variant="h4" component="h1" gutterBottom sx={{ mb: 4 }}>
-        Admin Dashboard
-      </Typography>
+    <Container maxWidth="xl" sx={{ mt: 6, mb: 10 }}>
+      
+      {/* Page Header */}
+      <Box sx={{ mb: 5 }}>
+        <Typography variant="h3" component="h1" fontWeight="bold" gutterBottom>
+          Dashboard Overview
+        </Typography>
+        <Typography variant="subtitle1" color="text.secondary">
+          Monitor your hotel's performance, reservations, and user metrics in real-time.
+        </Typography>
+      </Box>
 
-      {/* Summary Cards */}
-      <Grid container spacing={3} sx={{ mb: 4 }}>
-        <Grid item xs={12} sm={6} md={3}>
+      {/* 4 Summary Stat Cards */}
+      <Grid container spacing={4} sx={{ mb: 6 }}>
+        <Grid item xs={12} sm={6} lg={3}>
           <StatCard 
             title="Total Reservations" 
             value={data.summary.totalReservations} 
-            icon={<EventAvailableIcon sx={{ color: '#1976d2', fontSize: 40 }} />}
+            icon={<EventAvailableIcon sx={{ color: '#1976d2', fontSize: 45 }} />}
             color="#1976d2"
           />
         </Grid>
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid item xs={12} sm={6} lg={3}>
           <StatCard 
-            title="Active Reservations" 
+            title="Active Bookings" 
             value={data.summary.activeReservations} 
-            icon={<EventAvailableIcon sx={{ color: '#2e7d32', fontSize: 40 }} />}
+            icon={<EventAvailableIcon sx={{ color: '#2e7d32', fontSize: 45 }} />}
             color="#2e7d32"
           />
         </Grid>
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid item xs={12} sm={6} lg={3}>
           <StatCard 
             title="Cancelled" 
             value={data.summary.cancelledReservations} 
-            icon={<CancelIcon sx={{ color: '#d32f2f', fontSize: 40 }} />}
+            icon={<CancelIcon sx={{ color: '#d32f2f', fontSize: 45 }} />}
             color="#d32f2f"
           />
         </Grid>
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid item xs={12} sm={6} lg={3}>
           <StatCard 
-            title="Total Users" 
+            title="Total Registered Users" 
             value={data.summary.totalUsers} 
-            icon={<GroupIcon sx={{ color: '#ed6c02', fontSize: 40 }} />}
+            icon={<GroupIcon sx={{ color: '#ed6c02', fontSize: 45 }} />}
             color="#ed6c02"
           />
         </Grid>
       </Grid>
 
-        {/* Charts */}
-      <Grid container spacing={3}>
-        {/* Bar Chart: Reservations by Month (takes 8 out of 12 columns) */}
-        <Grid item xs={12} md={8}>
-          <Paper elevation={3} sx={{ p: 3, height: 400 }}>
-            <Typography variant="h6" gutterBottom>
-              Reservations by Month
+      <Grid container spacing={4}>
+        
+        <Grid item xs={12} lg={8}>
+          <Paper elevation={3} sx={{ p: 4, height: 450, borderRadius: 3 }}>
+            <Typography variant="h5" fontWeight="bold" sx={{ mb: 4 }}>
+              Reservations Trend (Monthly)
             </Typography>
-            <ResponsiveContainer width="100%" height="90%">
-              <BarChart data={data.reservationsByMonth} margin={{ top: 20, right: 30, left: 0, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="month" />
-                <YAxis allowDecimals={false} />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey="count" fill="#1976d2" name="Reservations" />
+            <ResponsiveContainer width="100%" height="85%">
+              <BarChart data={data.reservationsByMonth} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                <XAxis dataKey="month" axisLine={false} tickLine={false} />
+                <YAxis allowDecimals={false} axisLine={false} tickLine={false} />
+                <Tooltip 
+                  cursor={{ fill: 'transparent' }}
+                  contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                />
+                <Bar 
+                  dataKey="count" 
+                  fill="#1976d2" 
+                  name="Reservations" 
+                  radius={[6, 6, 0, 0]}
+                  barSize={40} 
+                />
               </BarChart>
             </ResponsiveContainer>
           </Paper>
         </Grid>
 
-        {/* Pie Chart: Reservations by Location (takes 4 out of 12 columns) */}
-        <Grid item xs={12} md={4}>
-          <Paper elevation={3} sx={{ p: 3, height: 400 }}>
-            <Typography variant="h6" gutterBottom>
+        <Grid item xs={12} lg={4}>
+          <Paper elevation={3} sx={{ p: 4, height: 450, borderRadius: 3 }}>
+            <Typography variant="h5" fontWeight="bold" sx={{ mb: 1 }}>
               Bookings by Location
             </Typography>
             <ResponsiveContainer width="100%" height="90%">
@@ -148,21 +174,31 @@ const AdminDashboard = () => {
                   data={data.reservationsByLocation}
                   cx="50%"
                   cy="50%"
-                  labelLine={false}
-                  label={({ name, percent }) => percent > 0 ? `${name} (${(percent * 100).toFixed(0)}%)` : ''}
-                  outerRadius={100}
-                  fill="#8884d8"
+                  innerRadius={70}
+                  outerRadius={110}
+                  paddingAngle={3} 
                   dataKey="count"
+                  stroke="none"
                 >
                   {data.reservationsByLocation.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
-                <Tooltip />
+                <Tooltip 
+                  contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                />
+                {/* Replaced messy text labels with a clean vertical Legend */}
+                <Legend 
+                  layout="horizontal" 
+                  verticalAlign="bottom" 
+                  align="center"
+                  wrapperStyle={{ paddingTop: '20px' }}
+                />
               </PieChart>
             </ResponsiveContainer>
           </Paper>
         </Grid>
+        
       </Grid>
     </Container>
   );
