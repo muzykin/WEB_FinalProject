@@ -15,7 +15,7 @@ import { useAuth } from '../context/AuthContext';
 const DEFAULT_SEARCH_PARAMS = {
   checkIn: dayjs().add(1, 'day'),
   checkOut: dayjs().add(3, 'day'),
-  guests: 2,
+  guests: 1,
   city: '',
   search: '',
   rating: '',
@@ -77,7 +77,6 @@ const RoomSearch = () => {
 
   const handleReserveClick = (room) => {
     if (!auth?.user) {
-      // Redirect to login but maybe save state later? Simple redirect for now.
       navigate('/login');
       return;
     }
